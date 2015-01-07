@@ -41,7 +41,7 @@ abstract class Est_Handler_Akeneo_AbstractDatabase extends Est_Handler_AbstractD
                 throw new Exception("Composer Vendor Directory not found in current Path, needed to require Spyc.");
             }
             $include = substr($currentPath, 0, $vendorPos) . 'vendor/mustangostang/spyc/Spyc.php';
-            require_once $include ;
+            require_once $include;
         }
         $localYmlFile = 'app/config/parameters.yml';
 
