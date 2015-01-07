@@ -35,7 +35,13 @@ abstract class Est_Handler_Akeneo_AbstractDatabase extends Est_Handler_AbstractD
     {
         // Get Yml Reader if not already present
         if (!class_exists('Spyc')) {
-            require_once __DIR__ . '/../../../vendor/mustangostang/spyc/Spyc.php';
+            $currentPath = __DIR__;
+            $vendorPos = strpos(strtolower($currentPath), 'vendor');
+            if (!$vendorPos) {
+                throw new Exception("Composer Vendor Directory not found in current Path, needed to require Spyc.");
+            }
+            $rootPath = substr($currentPath, 0, $vendorPos);
+            require_once $rootPath . '/vendor/mustangostang/spyc/Spyc.php';
         }
         $localYmlFile = 'app/config/parameters.yml';
 
