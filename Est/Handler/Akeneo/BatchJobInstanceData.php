@@ -59,7 +59,7 @@ class Est_Handler_Akeneo_BatchJobInstanceData extends Est_Handler_Akeneo_Abstrac
                     $configData[$key] = $this->value;
                     $sqlParameters[':value'] = serialize($configData);
                     $query = 'UPDATE `' . $this->_tablePrefix . $this->_tableName . '` SET `' . $this->_configField . '` = :value WHERE `code` LIKE :code';
-                    $this->_processUpdate($query, $sqlParameters, $configData);
+                    $this->_processUpdate($query, $sqlParameters, $configData[$key]);
                     break;
                 case self::ACTION_NO_ACTION;
                 default:
