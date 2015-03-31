@@ -44,7 +44,7 @@ class Est_HandlerCollection implements Iterator {
                 continue;
             }
 
-            if (count($excludeGroups) && count(array_intersect($excludeGroups, $groups)) > 0) {
+            if (count($excludeGroups) && count(array_intersect($excludeGroups, $rowGroups)) > 0) {
                 // current row's group do match given exclude groups
                 continue;
             }
