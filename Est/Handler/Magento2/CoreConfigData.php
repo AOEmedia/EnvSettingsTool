@@ -2,14 +2,12 @@
 
 /**
  * Parameters
- * (copy of Magento 1 file)
  *
  * - scope
  * - scopeId
  * - path
  */
-class Est_Handler_Magento2_CoreConfigData
-    extends Est_Handler_Magento2_AbstractDatabase
+class Est_Handler_Magento2_CoreConfigData extends Est_Handler_Magento2_AbstractDatabase
 {
     /**
      * Protected method that actually applies the settings. This method is implemented in the inheriting classes and
@@ -22,29 +20,25 @@ class Est_Handler_Magento2_CoreConfigData
     {
         $this->_checkIfTableExists('core_config_data');
 
-        $scope = $this->param1;
+        $scope   = $this->param1;
         $scopeId = $this->param2;
-        $path = $this->param3;
+        $path    = $this->param3;
 
-        $sqlParameters = $this->_getSqlParameters($scope, $scopeId, $path);
+        $sqlParameters       = $this->_getSqlParameters($scope, $scopeId, $path);
         $containsPlaceholder = $this->_containsPlaceholder($sqlParameters);
-        $action = self::ACTION_NO_ACTION;
+        $action              = self::ACTION_NO_ACTION;
 
         if (strtolower(trim($this->value)) == '--delete--') {
             $action = self::ACTION_DELETE;
         } else {
-            $query = 'SELECT `value` FROM `' . $this->_tablePrefix
-                . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
+            $query = 'SELECT `value` FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
             $firstRow = $this->_getFirstRow($query, $sqlParameters);
 
             if ($containsPlaceholder) {
                 // scope, scope_id or path contains '%' char - we can't build an insert query, only update is possible
                 if ($firstRow === false) {
                     $this->addMessage(
-                        new Est_Message(
-                            'Trying to update using placeholders but no rows found in the db',
-                            Est_Message::SKIPPED
-                        )
+                        new Est_Message('Trying to update using placeholders but no rows found in the db', Est_Message::SKIPPED)
                     );
                 } else {
                     $action = self::ACTION_UPDATE;
@@ -54,12 +48,7 @@ class Est_Handler_Magento2_CoreConfigData
                     $action = self::ACTION_INSERT;
                 } elseif ($firstRow['value'] == $this->value) {
                     $this->addMessage(
-                        new Est_Message(
-                            sprintf(
-                                'Value "%s" is already in place. Skipping.',
-                                $firstRow['value']
-                            ), Est_Message::SKIPPED
-                        )
+                        new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $firstRow['value']), Est_Message::SKIPPED)
                     );
                 } else {
                     $action = self::ACTION_UPDATE;
@@ -69,23 +58,18 @@ class Est_Handler_Magento2_CoreConfigData
 
         switch ($action) {
             case self::ACTION_DELETE:
-                $query = 'DELETE FROM `' . $this->_tablePrefix
-                    . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
+                $query = 'DELETE FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
                 $this->_processDelete($query, $sqlParameters);
                 break;
             case self::ACTION_INSERT:
                 $sqlParameters[':value'] = $this->value;
-                $query = 'INSERT INTO `' . $this->_tablePrefix
-                    . 'core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)';
+                $query = 'INSERT INTO `' . $this->_tablePrefix . 'core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)';
                 $this->_processInsert($query, $sqlParameters);
                 break;
             case self::ACTION_UPDATE:
                 $sqlParameters[':value'] = $this->value;
-                $query = 'UPDATE `' . $this->_tablePrefix
-                    . 'core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
-                $this->_processUpdate(
-                    $query, $sqlParameters, $firstRow['value']
-                );
+                $query = 'UPDATE `' . $this->_tablePrefix . 'core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
+                $this->_processUpdate($query, $sqlParameters, $firstRow['value']);
                 break;
             case self::ACTION_NO_ACTION;
             default:
@@ -105,14 +89,13 @@ class Est_Handler_Magento2_CoreConfigData
     {
         $this->_checkIfTableExists('core_config_data');
 
-        $scope = $this->param1;
+        $scope   = $this->param1;
         $scopeId = $this->param2;
-        $path = $this->param3;
+        $path    = $this->param3;
 
         $sqlParameters = $this->_getSqlParameters($scope, $scopeId, $path);
 
-        $query = 'SELECT scope, scope_id, path, value FROM `'
-            . $this->_tablePrefix
+        $query = 'SELECT scope, scope_id, path, value FROM `' . $this->_tablePrefix
             . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
 
         return $this->_outputQuery($query, $sqlParameters);
@@ -124,7 +107,6 @@ class Est_Handler_Magento2_CoreConfigData
      * @param string $scope
      * @param string $scopeId
      * @param string $path
-     *
      * @return array
      * @throws Exception
      */
@@ -141,43 +123,31 @@ class Est_Handler_Magento2_CoreConfigData
         }
 
         if (!in_array($scope, array('default', 'stores', 'websites', '%'))) {
-            throw new Exception(
-                "Scope must be 'default', 'stores', 'websites', or '%'"
-            );
+            throw new Exception("Scope must be 'default', 'stores', 'websites', or '%'");
         }
 
         if ($scope == 'default') {
             $scopeId = 0;
         }
 
-        if ($scope == 'stores' && !is_numeric($scopeId) && $scopeId !== '%') {
+        if ($scope == 'stores' && !is_numeric($scopeId)) {
             // do a store code lookup
-            $code = $scopeId;
+            $code    = $scopeId;
             $scopeId = $this->_getStoreIdFromCode($code);
-            $this->addMessage(
-                new Est_Message(
-                    "Found store id '$scopeId' for code '$code'",
-                    Est_Message::INFO
-                )
-            );
+            $this->addMessage(new Est_Message("Found store id '$scopeId' for code '$code'", Est_Message::INFO));
         }
 
-        if ($scope == 'websites' && !is_numeric($scopeId) && $scopeId !== '%') {
+        if ($scope == 'websites' && !is_numeric($scopeId)) {
             // do a website code lookup
-            $code = $scopeId;
+            $code    = $scopeId;
             $scopeId = $this->_getWebsiteIdFromCode($code);
-            $this->addMessage(
-                new Est_Message(
-                    "Found website id '$scopeId' for code '$code'",
-                    Est_Message::INFO
-                )
-            );
+            $this->addMessage(new Est_Message("Found website id '$scopeId' for code '$code'", Est_Message::INFO));
         }
 
         return array(
-            ':scope' => $scope,
+            ':scope'   => $scope,
             ':scopeId' => $scopeId,
-            ':path' => $path
+            ':path'    => $path
         );
     }
 }
