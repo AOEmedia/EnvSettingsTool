@@ -75,7 +75,7 @@ class Est_Handler_Magento_Api2AclAttribute extends Est_Handler_Magento_AbstractD
                 } else {
                     if ($resource_id === 'all') {
                         unset($sqlParameters[':operation']);
-                        $query = 'UPDATE `' . $this->_tablePrefix . 'api2_acl_attribute` SET `allowed_attributes` = NULL, `operation` = NULL WHERE IFNULL(`user_type`, \'\') LIKE :user_type AND IFNULL(`resource_id`, \'\')';
+                        $query = 'UPDATE `' . $this->_tablePrefix . 'api2_acl_attribute` SET `allowed_attributes` = NULL, `operation` =  \'\' WHERE IFNULL(`user_type`, \'\') LIKE :user_type AND IFNULL(`resource_id`, \'\')';
 
                     } else {
                         $sqlParameters[':allowed_attributes'] = $this->value;
@@ -86,7 +86,7 @@ class Est_Handler_Magento_Api2AclAttribute extends Est_Handler_Magento_AbstractD
             } else {
                 if ($resource_id === 'all') {
                     unset($sqlParameters[':operation']);
-                    $query = 'INSERT INTO `' . $this->_tablePrefix . 'api2_acl_attribute` (`user_type`, `resource_id`, `operation`) VALUES (:user_type, :resource_id, NULL)';
+                    $query = 'INSERT INTO `' . $this->_tablePrefix . 'api2_acl_attribute` (`user_type`, `resource_id`, `operation`) VALUES (:user_type, :resource_id,  \'\')';
                 } else {
                     $sqlParameters[':allowed_attributes'] = $this->value;
                     $query = 'INSERT INTO `' . $this->_tablePrefix . 'api2_acl_attribute` (`user_type`, `resource_id`, `operation`, `allowed_attributes`) VALUES (:user_type, :resource_id, :operation, :allowed_attributes)';
