@@ -236,7 +236,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
         $result       = $pdoStatement->execute($sqlParameters);
 
         if ($result === false) {
-            throw new Exception('Error while deleting rows');
+            throw new Exception('Error while deleting value: ' . var_export($pdoStatement->errorInfo(), true));
         }
 
         $rowCount = $pdoStatement->rowCount();
@@ -256,13 +256,11 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
      */
     protected function _processInsert($query, array $sqlParameters)
     {
-        $result = $this->getDbConnection()
-            ->prepare($query)
-            ->execute($sqlParameters);
+        $pdoStatement = $this->getDbConnection()->prepare($query);
+        $result = $pdoStatement->execute($sqlParameters);
 
         if ($result === false) {
-            // TODO: include speaking error message
-            throw new Exception('Error while updating value');
+            throw new Exception('Error while inserting value: ' . var_export($pdoStatement->errorInfo(), true));
         }
 
         $this->addMessage(new Est_Message(sprintf('Inserted new value "%s"', $this->value)));
@@ -282,8 +280,7 @@ abstract class Est_Handler_Magento_AbstractDatabase extends Est_Handler_Abstract
         $result       = $pdoStatement->execute($sqlParameters);
 
         if ($result === false) {
-            // TODO: include speaking error message
-            throw new Exception('Error while updating value');
+            throw new Exception('Error while updating value: ' . var_export($pdoStatement->errorInfo(), true));
         }
 
         $rowCount = $pdoStatement->rowCount();
