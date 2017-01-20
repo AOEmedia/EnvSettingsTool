@@ -86,7 +86,7 @@ class Est_Handler_Magento_Api2AclAttribute extends Est_Handler_Magento_AbstractD
             } else {
                 if ($resource_id === 'all') {
                     unset($sqlParameters[':operation']);
-                    $query = 'INSERT INTO `' . $this->_tablePrefix . 'api2_acl_attribute` (`user_type`, `resource_id`) VALUES (:user_type, :resource_id)';
+                    $query = 'INSERT INTO `' . $this->_tablePrefix . 'api2_acl_attribute` (`user_type`, `resource_id`, `operation`) VALUES (:user_type, :resource_id, NULL)';
                 } else {
                     $sqlParameters[':allowed_attributes'] = $this->value;
                     $query = 'INSERT INTO `' . $this->_tablePrefix . 'api2_acl_attribute` (`user_type`, `resource_id`, `operation`, `allowed_attributes`) VALUES (:user_type, :resource_id, :operation, :allowed_attributes)';
