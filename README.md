@@ -70,7 +70,7 @@ Example
     * Param2: XPath
     * Param3: not used
 
-* **Est_Handler_Magento_CoreConfigData**: Changes values of core_config_data table in a Magento instance. It reads its database parameters from app/etc/local.xml - therefore it needs to be placed after any adjustments of DB credentials.
+* **Est_Handler_Magento_CoreConfigData** or **Est_Handler_Magento2_CoreConfigData**: Changes values of core_config_data table in a Magento 1 or 2 instance. It reads its database parameters from app/etc/local.xml or app/etc/env.php - therefore it needs to be placed after any adjustments of DB credentials.
 
     * Param1: scope ('default', 'stores', 'websites', or '%')
     * Param2: scopeid (store id, store code, website id, website code, 0 for default scope or '%')
