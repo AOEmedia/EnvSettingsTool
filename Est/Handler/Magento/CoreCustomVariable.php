@@ -186,9 +186,9 @@ class Est_Handler_Magento_CoreCustomVariable extends Est_Handler_Magento_Abstrac
             throw new Exception("No store found");
         }
         if (!is_numeric($store)) {
-            $code = $store;
-            $store = $this->_getStoreIdFromCode($code);
-            $this->addMessage(new Est_Message("Found store id '$store' for code '$code'", Est_Message::INFO));
+            $storeCode = $store;
+            $store = $this->_getStoreIdFromCode($storeCode);
+            $this->addMessage(new Est_Message("Found store id '$store' for code '$storeCode'", Est_Message::INFO));
         }
 
         if (empty($type)) {
