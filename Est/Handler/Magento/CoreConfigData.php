@@ -34,7 +34,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             $query = 'SELECT `value` FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
             $firstRow = $this->_getFirstRow($query, $sqlParameters);
 
-            // use a true NULL value instead of a string
+            // use a real NULL value instead of a string
             if (strtolower(trim($this->value)) === 'null') {
                 $this->value = null;
             }
