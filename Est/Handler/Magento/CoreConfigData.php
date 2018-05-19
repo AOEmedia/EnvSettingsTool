@@ -51,7 +51,7 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             } else {
                 if ($firstRow === false) {
                      $action = self::ACTION_INSERT;
-                } elseif ($firstRow['value'] == $this->value) {
+                } elseif ($firstRow['value'] === $this->value) {
                     $this->addMessage(
                         new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $firstRow['value']), Est_Message::SKIPPED)
                     );
