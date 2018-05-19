@@ -34,11 +34,6 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             $query = 'SELECT `value` FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
             $firstRow = $this->_getFirstRow($query, $sqlParameters);
 
-            // use a real NULL value instead of a string
-            if (strtolower(trim($this->value)) === 'null') {
-                $this->value = null;
-            }
-
             if ($containsPlaceholder) {
                 // scope, scope_id or path contains '%' char - we can't build an insert query, only update is possible
                 if ($firstRow === false) {
@@ -61,18 +56,23 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             }
         }
 
+        if (strtolower(trim($this->value)) === 'null') {
+            // use a real NULL value instead of a string
+            $sqlParameters[':value'] = null;
+        } else {
+            $sqlParameters[':value'] = $this->value;
+        }
+
         switch ($action) {
             case self::ACTION_DELETE:
                 $query = 'DELETE FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
                 $this->_processDelete($query, $sqlParameters);
                 break;
             case self::ACTION_INSERT:
-                $sqlParameters[':value'] = $this->value;
                 $query = 'INSERT INTO `' . $this->_tablePrefix . 'core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)';
                 $this->_processInsert($query, $sqlParameters);
                 break;
             case self::ACTION_UPDATE:
-                $sqlParameters[':value'] = $this->value;
                 $query = 'UPDATE `' . $this->_tablePrefix . 'core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
                 $this->_processUpdate($query, $sqlParameters, $firstRow['value']);
                 break;
