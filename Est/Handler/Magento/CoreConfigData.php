@@ -24,11 +24,12 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
         $scopeId = $this->param2;
         $path    = $this->param3;
 
-        $sqlParameters       = $this->_getSqlParameters($scope, $scopeId, $path);
-        $containsPlaceholder = $this->_containsPlaceholder($sqlParameters);
-        $action              = self::ACTION_NO_ACTION;
+        $sqlParameters         = $this->_getSqlParameters($scope, $scopeId, $path);
+        $containsPlaceholder   = $this->_containsPlaceholder($sqlParameters);
+        $action                = self::ACTION_NO_ACTION;
+        $trimmedLowerCaseValue = strtolower(trim($this->value));
 
-        if (strtolower(trim($this->value)) == '--delete--') {
+        if ($trimmedLowerCaseValue == '--delete--') {
             $action = self::ACTION_DELETE;
         } else {
             $query = 'SELECT `value` FROM `' . $this->_tablePrefix . 'core_config_data` WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
@@ -46,14 +47,23 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
             } else {
                 if ($firstRow === false) {
                      $action = self::ACTION_INSERT;
-                } elseif ($firstRow['value'] == $this->value) {
+                } elseif (
+                    $firstRow['value'] === $this->value
+                    || ($firstRow['value'] === null && $trimmedLowerCaseValue == 'null')
+                    ) {
+                    $oldValue = $firstRow['value'] === null ? 'NULL' : $firstRow['value'];
                     $this->addMessage(
-                        new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $firstRow['value']), Est_Message::SKIPPED)
+                        new Est_Message(sprintf('Value "%s" is already in place. Skipping.', $oldValue), Est_Message::SKIPPED)
                     );
                 } else {
                      $action = self::ACTION_UPDATE;
                 }
             }
+        }
+
+        if ($action != self::ACTION_DELETE) {
+            // Insert or update with a real SQL NULL
+            $sqlParameters[':value'] = $trimmedLowerCaseValue === 'null' ? null : $this->value;
         }
 
         switch ($action) {
@@ -62,12 +72,10 @@ class Est_Handler_Magento_CoreConfigData extends Est_Handler_Magento_AbstractDat
                 $this->_processDelete($query, $sqlParameters);
                 break;
             case self::ACTION_INSERT:
-                $sqlParameters[':value'] = $this->value;
                 $query = 'INSERT INTO `' . $this->_tablePrefix . 'core_config_data` (`scope`, `scope_id`, `path`, value) VALUES (:scope, :scopeId, :path, :value)';
                 $this->_processInsert($query, $sqlParameters);
                 break;
             case self::ACTION_UPDATE:
-                $sqlParameters[':value'] = $this->value;
                 $query = 'UPDATE `' . $this->_tablePrefix . 'core_config_data` SET `value` = :value WHERE `scope` LIKE :scope AND `scope_id` LIKE :scopeId AND `path` LIKE :path';
                 $this->_processUpdate($query, $sqlParameters, $firstRow['value']);
                 break;

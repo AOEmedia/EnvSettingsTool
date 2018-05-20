@@ -78,6 +78,7 @@ Example
 
     * Special features:
         * If the value field of a row for the current environment is `--delete--` the matched row will be deleted
+        * If the value field of a row for the current environment is `null` the row will have a value of [NULL (SQL)](https://en.wikipedia.org/wiki/Null_(SQL))
         * param1, param2, or param3 can use the wildcard `%` instead a concrete values. This will make EnvSettingsTool apply the value to multiple existing rows.
         * If scope is `stores` the scope id can be a store code instead of a store id.
         * If scope is `website` the scope id can be a website code instead of a website id.
@@ -114,7 +115,7 @@ Example
     * Param2: not used
     * Param3: not used
     * Value: sourceFile path
-    
+
 * **Est_Handler_Magento_EavEntityStore**: Sets a predefined increment prefix. The last increment id will be set to <store-id><prefix>00000000.
 
     * Param1: entity type code or entity type id
@@ -127,10 +128,10 @@ Example
     * Param2: Email
     * Param3: Rolename
     * Value: 1=enabled, 0=disabled
-    
+
 * **Est_Handler_Magento_StoreActivate**: Enables/disables an existing store
 
-    * Param1: store id or code 
+    * Param1: store id or code
     * Param2: not used
     * Param3: not used
     * Value: 0 for disable, 1 for enable
@@ -179,7 +180,7 @@ The special syntax `###FILE:filename###` allows to read the content of a file an
 Example:
 
     Est_Handler_XmlFile('app/etc/local.xml', '/config/global/cache/id_prefix', '') = x###FILE:../build.txt###_
-    
+
 Will read the content of ../build.txt and insert it in the id_prefix node: x72_
 
 ### Loops
@@ -275,20 +276,20 @@ Example:
 Disable all admin users:
 
     Est_Handler_Magento_AdminUserActivate('%', '%', '%') = 0
-    
+
 Enable user 'john.doe':
 
     Est_Handler_Magento_AdminUserActivate('john.doe', '%', '%') = 1
-    
+
 Enable user with email address 'info@example.com':
 
     Est_Handler_Magento_AdminUserActivate('%', 'info@example.com', '%') = 1
-    
+
 Enable all user with email addresses '...@example.com':
-    
+
     Est_Handler_Magento_AdminUserActivate('%', '%@example.com', '%') = 1
-    
-Enable all users with role 'Customer Service':    
+
+Enable all users with role 'Customer Service':
 
     Est_Handler_Magento_AdminUserActivate('%', '%', 'Customer Service') = 1
 
